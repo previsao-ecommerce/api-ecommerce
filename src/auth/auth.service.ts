@@ -1,7 +1,7 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { LoginDTO } from './dtos/login.dto';
@@ -15,10 +15,25 @@ import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class AuthService {
+  private issuer = 'login';
+  private audience = 'users';
   constructor(
     private readonly userService: UserService,
     private jwtService: JwtService,
   ) {}
+
+  async checkToken(token: string) {
+    try {
+      const data = this.jwtService.verify(token, {
+        audience: this.audience,
+        issuer: this.issuer,
+      });
+
+      return data;
+    } catch (e) {
+      throw new BadRequestException(e);
+    }
+  }
 
   async login(loginDto: LoginDTO): Promise<ReturnLoginDTO> {
     const user: UserEntity | undefined = await this.userService

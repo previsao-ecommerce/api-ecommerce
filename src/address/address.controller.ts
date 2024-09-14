@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AddressService } from './address.service';
 import { CreateAddressDto } from './dtos/createAddress.dto';
 import { AddressEntity } from './entities/address.entity';
 import { ReturnAddressDto } from './dtos/returnAddress.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
 
+// @UseGuards(AuthGuard)
 @Controller('address')
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
