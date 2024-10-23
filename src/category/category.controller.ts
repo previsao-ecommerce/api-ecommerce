@@ -21,7 +21,6 @@ import { UserType } from 'src/utils/enums/user-type.enum';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Roles(UserType.User, UserType.Admin)
   @Post()
   async create(
     @Body() createdCategory: CreateCategoryDto,
@@ -29,7 +28,6 @@ export class CategoryController {
     return this.categoryService.create(createdCategory);
   }
 
-  @Roles(UserType.User, UserType.Admin)
   @Get()
   async getAll(): Promise<ReturnCategoryDto[]> {
     return (await this.categoryService.getAll()).map(
