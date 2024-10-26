@@ -28,11 +28,22 @@ export class ProductController {
   }
 
   @Get()
-  async getAll(@Query('name') name?: string): Promise<ReturnProductDto[]> {
-    return (await this.productService.getAll(name)).map(
-      (productEntity) => new ReturnProductDto(productEntity),
-    );
+  async getAll(
+    @Query('name') name?: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ): Promise<{ items: ReturnProductDto[]; total: number; pageTotal: number; page: number; limit: number }> {
+    const { products, total, pageTotal } = await this.productService.getAll(name, page, limit);
+  
+    return {
+      items: products.map((productEntity) => new ReturnProductDto(productEntity)),
+      total,
+      pageTotal, 
+      page,
+      limit,
+    };
   }
+  
 
   @Get('/:id')
   async getById(@Param('id') id: string): Promise<ReturnProductDto> {

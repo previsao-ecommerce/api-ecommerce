@@ -33,10 +33,20 @@ export class CategoryService {
     });
   }
 
-  async getAll(): Promise<CategoryEntity[]> {
-    const categories = await this.categoryRepository.find();
+  async getAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    categories: CategoryEntity[];
+    total: number;
+    pageTotal: number;
+  }> {
+    const [categories, total] = await this.categoryRepository.findAndCount({
+      take: limit,
+      skip: (page - 1) * limit,
+    });
 
-    return categories;
+    return { categories, total, pageTotal: categories.length };
   }
 
   async getById(id: string): Promise<CategoryEntity> {

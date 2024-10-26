@@ -36,14 +36,19 @@ export class ProductService {
     });
   }
 
-  async getAll(name?: string): Promise<ProductEntity[]> {
-    let where = name ? { name: ILike(`%${name}%`) } : {};
-
-    return this.productRepository.find({
+  async getAll(name?: string, page: number = 1, limit: number = 10): Promise<{ products: ProductEntity[], total: number, pageTotal: number }> {
+    const where = name ? { name: ILike(`%${name}%`) } : {};
+  
+    const [products, total] = await this.productRepository.findAndCount({
       where: { ...where, archived: false },
       relations: ['category'],
+      take: limit,
+      skip: (page - 1) * limit,
     });
+  
+    return { products, total, pageTotal: products.length }; 
   }
+  
 
   async getById(id: string): Promise<ProductEntity> {
     const product = await this.productRepository.findOne({

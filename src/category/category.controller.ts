@@ -29,10 +29,30 @@ export class CategoryController {
   }
 
   @Get()
-  async getAll(): Promise<ReturnCategoryDto[]> {
-    return (await this.categoryService.getAll()).map(
-      (categoryEntity) => new ReturnCategoryDto(categoryEntity),
+  async getAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ): Promise<{
+    items: ReturnCategoryDto[];
+    total: number;
+    pageTotal: number;
+    page: number;
+    limit: number;
+  }> {
+    const { categories, total, pageTotal } = await this.categoryService.getAll(
+      page,
+      limit,
     );
+
+    return {
+      items: categories.map(
+        (categoryEntity) => new ReturnCategoryDto(categoryEntity),
+      ),
+      total,
+      pageTotal,
+      page,
+      limit,
+    };
   }
 
   @Get('/:id')
