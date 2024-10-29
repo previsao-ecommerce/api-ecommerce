@@ -12,6 +12,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { UploadModule } from './upload/upload.module';
+import { OrderModule } from './order/order.module';
+import { OrderItemModule } from './orderItem/order-item.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { UploadModule } from './upload/upload.module';
     AuthModule,
     JwtModule,
     ProductModule,
+    OrderModule,
+    OrderItemModule,
   ],
   controllers: [AppController],
   providers: [
