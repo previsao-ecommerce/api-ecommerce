@@ -5,6 +5,8 @@ export class CreateOrderItemDto {
   order_id: string;
   @IsString()
   product_id: string;
+  @IsString()
+  product_category_id: string;
   @IsNumber()
   quantity: number;
   @IsNumber()

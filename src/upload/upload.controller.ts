@@ -18,9 +18,7 @@ export class UploadController {
   async uploadFiles(
     @UploadedFiles(
       new ParseFilePipe({
-        validators: [
-          // Adicione suas validações aqui, se necessário
-        ],
+        validators: [],
       }),
     )
     files: Express.Multer.File[],

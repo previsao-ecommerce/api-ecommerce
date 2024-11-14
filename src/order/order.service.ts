@@ -29,6 +29,22 @@ export class OrderService {
     });
   }
 
+  async getDashboard(): Promise<any> {
+    const orders = await this.orderRepository.find();
+    const totalOrders = orders.length;
+    const totalValue = orders.reduce((acc, order) => acc + order.total, 0);
+    const totalItems = orders.reduce(
+      (acc, order) => acc + order.orderItems.length,
+      0,
+    );
+
+    return {
+      totalOrders,
+      totalValue,
+      totalItems,
+    };
+  }
+
   async getById(id: string): Promise<OrderEntity> {
     const order = await this.orderRepository.findOne({
       where: { id },

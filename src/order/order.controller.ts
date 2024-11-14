@@ -30,6 +30,10 @@ export class OrderController {
       (orderEntity) => new ReturnOrderDTO(orderEntity),
     );
   }
+  @Get('/dashboard')
+  async getDashboard(): Promise<any> {
+    return this.orderService.getDashboard();
+  }
 
   @Get('/:id')
   async getById(@Param('id') id: string): Promise<ReturnOrderDTO> {

@@ -12,6 +12,7 @@ import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { UpdateProductDTO } from './dtos/updateProduct.dto';
 import { RequestOptions } from 'https';
+import axios from 'axios';
 
 @Injectable()
 export class ProductService {
@@ -36,19 +37,46 @@ export class ProductService {
     });
   }
 
-  async getAll(name?: string, page: number = 1, limit: number = 10): Promise<{ products: ProductEntity[], total: number, pageTotal: number }> {
+  async getAll(
+    name?: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ products: ProductEntity[]; total: number; pageTotal: number }> {
+    const { data: topSellingCategories } = await axios.get(
+      'http://localhost:8000/orders/count/categories',
+    );
+    const categoryRanking = topSellingCategories.map(
+      (cat) => cat.product_category_name,
+    );
+
     const where = name ? { name: ILike(`%${name}%`) } : {};
-  
+
     const [products, total] = await this.productRepository.findAndCount({
       where: { ...where, archived: false },
       relations: ['category'],
-      take: limit,
-      skip: (page - 1) * limit,
     });
-  
-    return { products, total, pageTotal: products.length }; 
+
+    const sortedProducts = products.sort((a, b) => {
+      const rankA = categoryRanking.indexOf(a.category.name);
+      const rankB = categoryRanking.indexOf(b.category.name);
+
+      // Se a categoria não está no ranking, ela recebe uma prioridade menor
+      return (
+        (rankA === -1 ? Infinity : rankA) - (rankB === -1 ? Infinity : rankB)
+      );
+    });
+
+    const paginatedProducts = sortedProducts.slice(
+      (page - 1) * limit,
+      page * limit,
+    );
+
+    return {
+      products: paginatedProducts,
+      total,
+      pageTotal: paginatedProducts.length,
+    };
   }
-  
 
   async getById(id: string): Promise<ProductEntity> {
     const product = await this.productRepository.findOne({
