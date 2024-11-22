@@ -12,6 +12,8 @@ export class CreateUserDTO {
   name: string;
   @IsString()
   cpf_cnpj: string;
+  @IsNumber()
+  state: number;
   @IsString()
   email: string;
   @IsString()

@@ -25,6 +25,9 @@ export class OrderItemEntity {
   @Column({ name: 'product_category_id', type: 'uuid', nullable: false })
   product_category_id: string;
 
+  @Column({ name: 'product_category_number', type: 'integer', nullable: true })
+  product_category_number: number;
+
   @Column({ name: 'quantity', type: 'integer', nullable: false })
   quantity: number;
 

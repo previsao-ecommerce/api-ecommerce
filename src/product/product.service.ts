@@ -13,6 +13,7 @@ import { UserService } from 'src/user/user.service';
 import { UpdateProductDTO } from './dtos/updateProduct.dto';
 import { RequestOptions } from 'https';
 import axios from 'axios';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Injectable()
 export class ProductService {
@@ -66,6 +67,66 @@ export class ProductService {
       );
     });
 
+    const paginatedProducts = sortedProducts.slice(
+      (page - 1) * limit,
+      page * limit,
+    );
+
+    return {
+      products: paginatedProducts,
+      total,
+      pageTotal: paginatedProducts.length,
+    };
+  }
+
+  async getAllLogged(
+    name?: string,
+    page: number = 1,
+    limit: number = 10,
+    customerStateId?: number,
+    price?: number,
+    reviewScore?: number,
+    productCategoryId?: number,
+  ): Promise<{ products: ProductEntity[]; total: number; pageTotal: number }> {
+    // Chama a API de recomendações para obter as categorias recomendadas
+    const { data: recommendations } = await axios.get(
+      'http://localhost:8000/recommendations',
+      {
+        params: {
+          customer_state_id: customerStateId,
+          price,
+          review_score: reviewScore,
+          product_category_id: productCategoryId,
+        },
+      },
+    );
+
+    // Ordena as categorias recomendadas pela distância ao centroid (menor distância = maior prioridade)
+    const recommendedCategories = recommendations.recomendacoes
+      .sort((a, b) => a.distancia_ao_centroid - b.distancia_ao_centroid)
+      .map((rec) => rec.product_category_name);
+
+    // Cria a condição de busca para o nome do produto, caso exista
+    const where = name ? { name: ILike(`%${name}%`) } : {};
+
+    // Busca os produtos e o total, sem considerar a ordem de recomendação ainda
+    const [products, total] = await this.productRepository.findAndCount({
+      where: { ...where, archived: false },
+      relations: ['category'],
+    });
+
+    // Ordena os produtos conforme a prioridade das categorias recomendadas
+    const sortedProducts = products.sort((a, b) => {
+      const rankA = recommendedCategories.indexOf(a.category.name);
+      const rankB = recommendedCategories.indexOf(b.category.name);
+
+      // Se a categoria não está no ranking, ela recebe uma prioridade menor
+      return (
+        (rankA === -1 ? Infinity : rankA) - (rankB === -1 ? Infinity : rankB)
+      );
+    });
+
+    // Aplica a paginação
     const paginatedProducts = sortedProducts.slice(
       (page - 1) * limit,
       page * limit,

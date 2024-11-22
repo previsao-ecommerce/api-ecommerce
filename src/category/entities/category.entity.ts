@@ -16,6 +16,9 @@ export class CategoryEntity {
   @Column({ name: 'name', type: 'varchar', length: 40, nullable: false })
   name: string;
 
+  @Column({ name: 'number', type: 'int', nullable: true })
+  number: number;
+
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
 

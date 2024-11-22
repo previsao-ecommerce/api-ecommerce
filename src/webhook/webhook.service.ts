@@ -48,6 +48,9 @@ export class WebhookService {
 
       const productIds = session.metadata.productIds.split(',');
       const categoryIds = session.metadata.categoryIds.split(',');
+      const categoryNumbers = session.metadata.categoryNumbers.split(',');
+
+      console.log('Items: ', lineItems.data);
 
       for (let index = 0; index < lineItems.data.length; index++) {
         const item = lineItems.data[index];
@@ -56,6 +59,7 @@ export class WebhookService {
           order_id: order.id,
           product_id: productIds[index],
           product_category_id: categoryIds[index],
+          product_category_number: Number(categoryNumbers[index]),
           quantity: item.quantity,
           unit_price: item.price.unit_amount / 100,
           total: (item.price.unit_amount / 100) * item.quantity,

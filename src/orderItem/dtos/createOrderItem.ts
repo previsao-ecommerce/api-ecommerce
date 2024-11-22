@@ -8,6 +8,8 @@ export class CreateOrderItemDto {
   @IsString()
   product_category_id: string;
   @IsNumber()
+  product_category_number: number;
+  @IsNumber()
   quantity: number;
   @IsNumber()
   unit_price: number;

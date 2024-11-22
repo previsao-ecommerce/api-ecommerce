@@ -26,4 +26,12 @@ export class OrderItemController {
   async getById(@Param('id') id: string): Promise<ReturnOrderItemDTO> {
     return new ReturnOrderItemDTO(await this.orderItemService.getById(id));
   }
+
+  @Get('user/:userId')
+  async getByUserId(
+    @Param('userId') userId: string,
+  ): Promise<ReturnOrderItemDTO[]> {
+    const orderItems = await this.orderItemService.getByUserId(userId);
+    return orderItems.map((item) => new ReturnOrderItemDTO(item));
+  }
 }

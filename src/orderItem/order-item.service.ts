@@ -44,6 +44,22 @@ export class OrderItemService {
     });
   }
 
+  async getByUserId(userId: string): Promise<OrderItemEntity[]> {
+    return this.orderItemRepository
+      .createQueryBuilder('order_item')
+      .innerJoin('order_item.order', 'order') // Faz o join com a tabela order
+      .where('order.user_id = :userId', { userId }) // Filtra pelo userId
+      .select([
+        'order_item.id',
+        'order_item.quantity',
+        'order_item.unit_price',
+        'order_item.total',
+        'order_item.product_category_id',
+        'order_item.product_category_number',
+      ]) // Opcional: escolha os campos que deseja selecionar
+      .getMany(); // Recupera os dados
+  }
+
   async delete(id: string): Promise<void> {
     await this.orderItemRepository.delete(id);
   }

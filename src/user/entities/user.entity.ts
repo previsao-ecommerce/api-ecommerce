@@ -20,6 +20,8 @@ export class UserEntity {
   name: string;
   @Column({ name: 'cpf_cnpj', length: 14, nullable: false })
   cpf_cnpj: string;
+  @Column({ name: 'state', type: 'int', nullable: true })
+  state: number;
   @Column({ name: 'email', length: 40, nullable: false })
   email: string;
   @Column({ name: 'password', length: 100, nullable: false })

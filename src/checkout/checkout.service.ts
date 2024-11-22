@@ -29,8 +29,6 @@ export class CheckoutService {
       quantity: item.quantity,
     }));
 
-    console.log('ITEMS', items);
-
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
@@ -42,6 +40,9 @@ export class CheckoutService {
         observation,
         productIds: items.map((item) => item.product_id).join(','),
         categoryIds: items.map((item) => item.product_category_id.id).join(','),
+        categoryNumbers: items
+          .map((item) => item.product_category_id.number)
+          .join(','),
       },
     });
 

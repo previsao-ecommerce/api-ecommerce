@@ -9,6 +9,7 @@ export class ReturnOrderItemDTO {
   order_id: string;
   product_id: string;
   product_category_id: string;
+  product_category_number: number;
   quantity: number;
   unit_price: number;
   total: number;
@@ -23,6 +24,7 @@ export class ReturnOrderItemDTO {
     this.order_id = orderItemEntity.order_id;
     this.product_id = orderItemEntity.product_id;
     this.product_category_id = orderItemEntity.product_category_id;
+    this.product_category_number = orderItemEntity.product_category_number;
     this.quantity = orderItemEntity.quantity;
     this.unit_price = orderItemEntity.unit_price;
     this.total = orderItemEntity.total;

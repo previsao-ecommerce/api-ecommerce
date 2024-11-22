@@ -34,7 +34,7 @@ export class OrderService {
     const totalOrders = orders.length;
     const totalValue = orders.reduce((acc, order) => acc + order.total, 0);
     const totalItems = orders.reduce(
-      (acc, order) => acc + order.orderItems.length,
+      (acc, order) => acc + order?.orderItems?.length,
       0,
     );
 
